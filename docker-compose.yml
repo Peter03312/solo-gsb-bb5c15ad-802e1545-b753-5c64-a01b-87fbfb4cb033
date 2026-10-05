@@ -1,0 +1,23 @@
+services:
+  init:
+    build: .
+    command: ["python", "scripts/init_db.py"]
+    environment:
+      CLAIMS_DB_PATH: /data/claims.db
+    volumes:
+      - claims-data:/data
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      CLAIMS_DB_PATH: /data/claims.db
+    volumes:
+      - claims-data:/data
+    depends_on:
+      init:
+        condition: service_completed_successfully
+
+volumes:
+  claims-data:
